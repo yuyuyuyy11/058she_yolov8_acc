@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Upload</title>
+</head>
+<body>
+    <h2>Upload a  file</h2>
+    <form action="http://127.0.0.1:8080/detect_and_track" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+    </form>
+
+    <hr>
+
+    <h2>Video Frame Information</h2>
+    <div id="frame_info"></div>
+
+    <script>
+        const input = document.querySelector('input[type="file"]');
+        const frameInfoDiv = document.getElementById('frame_info');
+
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(file);
+            video.controls = true;
+            document.body.appendChild(video);
+
+            video.addEventListener('loadedmetadata', function() {
+                const playbackRate = video.playbackRate;
+                const width = this.videoWidth;
+                const height = this.videoHeight;
+                frameInfoDiv.textContent = `Video Playback Rate: ${playbackRate}, Width: ${width}, Height: ${height}`;
+            });
+        });
+    </script>
+</body>
+</html>

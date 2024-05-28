@@ -1,0 +1,9 @@
+ultralytics
+protobuf==3.20.0rc1
+opencv_python==4.9.0.80
+mediapipe==0.10.14
+keras==2.10.0
+pyclipper
+onnxruntime
+shapely
+pillow==9.3.0
