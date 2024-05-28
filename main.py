@@ -61,7 +61,6 @@ class MainWindow(QMainWindow):
         self.imageView.setFixedSize(IMG_WIDTH, IMG_HEIGHT)
         self.imageView.setScene(self.scene)
         self.switch_status(False)
-        self.show_image_from_path()
 
     def __bind_all_functions(self):
         self.runBtn.clicked.connect(self.start_flask_app)
