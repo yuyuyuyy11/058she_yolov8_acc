@@ -30,8 +30,11 @@ def upload():
     print(res)
     return json.dumps(res)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="处理文件的脚本")
-    parser.add_argument('-p', '--port', type=str, help='Flask APP运行的端口号')
+def main():
+    parser = argparse.ArgumentParser(description="启动后端Flask应用")
+    parser.add_argument('-p', '--port', type=str, required=True, help='Flask APP运行的端口号')
     args = parser.parse_args()
     app.run('0.0.0.0', port=args.port, debug=True)
+
+if __name__ == '__main__':
+    main()
