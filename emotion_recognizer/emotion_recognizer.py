@@ -1,15 +1,21 @@
+import os
+import sys
+PROJ_DIR = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(PROJ_DIR)
+from utils import parameters
+
 from keras.utils import img_to_array
 import cv2
 from keras.models import load_model
 import numpy as np
-from .utils import parameters as er_params
+
 from PIL import Image, ImageDraw, ImageFont
 import os
 
 class EmotionRecognizer:
     def __init__(self) -> None:
-        self.face_detector = cv2.CascadeClassifier(er_params['model']['face'])
-        self.emotion_detector = load_model(er_params['model']['emotion'])
+        self.face_detector = cv2.CascadeClassifier(parameters['model']['face'])
+        self.emotion_detector = load_model(parameters['model']['emotion'])
 
     def recognize_emotion_from_image(self, image_gray):  # 传入的人脸图片是灰度图
         faces = self.face_detector.detectMultiScale(
@@ -28,7 +34,7 @@ class EmotionRecognizer:
         preds = self.emotion_detector.predict(roi)[0]
         max_index = preds.argmax()
         prob = preds[max_index]
-        return [[fX, fY, fX + fW, fY + fH], er_params['emotions'][max_index], prob]
+        return [[fX, fY, fX + fW, fY + fH], parameters['emotions'][max_index], prob]
     
     def recognize_emotion_from_path(self, image_path: str):
         image = cv2.imread(image_path)
@@ -38,8 +44,7 @@ class EmotionRecognizer:
         if face_res is not None:
             x1, y1, x2, y2 = face_res[0][0], face_res[0][1], face_res[0][2], face_res[0][3]
             draw = ImageDraw.Draw(image_pil)
-            font = ImageFont.truetype(os.path.join(os.path.dirname(os.path.dirname(__file__)), 
-                                                'font/仿宋_GB2312.ttf'), 30)
+            font = ImageFont.truetype(parameters['font'], 30)
             draw.text((x1, max(y1 - 30, 0)), f'{face_res[1]}:{face_res[2]:.3f}', font=font, fill='red')
             draw.rectangle([(x1, y1), (x2, y2)], outline='green', width=2)
     

@@ -23,7 +23,6 @@ def main():
     f1 = open(file_path, 'rb')
     f2 = open(output_path, 'w+')
     json_obj = {'file': str(base64.b64encode(f1.read()), encoding='utf-8')}
-    print(json_obj)
     f2.write(json.dumps(json_obj))
     f1.close()
     f2.close()
