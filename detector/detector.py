@@ -21,7 +21,7 @@ class Detector:
         self.image_pil = Image.fromarray(cv2.cvtColor(self.image_bgr, cv2.COLOR_BGR2RGB))
         # Yolo
         yolo_res = self.yolo_predictor.detect_object_from_image(self.image_bgr)
-        # print(f'yolo: {yolo_res}')
+        print(f'yolo: {yolo_res}')
         self.yolo_predictor.draw_on_image(self.image_pil, yolo_res)
         # OCR and emotion
         face_res, ocr_res = self.gesture_detector.detect_one_image(self.image_bgr)
@@ -30,9 +30,6 @@ class Detector:
         return dict_res
 
     def detect_from_path(self, image_path):
-        # cv2.imshow('img', image_bgr)
-        # cv2.waitKey()
-        # cv2.destroyAllWindows()
         return self.detect_from_image(cv2.imread(image_path))
     
     def cvt_res_to_dict(self, yolo_res, face_res, ocr_res):

@@ -8,7 +8,7 @@ class Yolov8Detector(object):
         self.model = YOLO(weights)  # load a pretrained model (recommended for training)
 
     def inferenc_image(self, opencv_image):
-        results = self.model(opencv_image, verbose=False, conf=0.2)  # predict on an image
+        results = self.model.predict(opencv_image, verbose=False, conf=0.2, device='cuda:0')  # predict on an image
         return results
 
     def draw_image(self, result_list, image_pil):

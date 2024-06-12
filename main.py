@@ -61,6 +61,7 @@ class MainWindow(QMainWindow):
         self.imageView.setFixedSize(IMG_WIDTH, IMG_HEIGHT)
         self.imageView.setScene(self.scene)
         self.switch_status(False)
+        self.update_image()
 
     def __bind_all_functions(self):
         self.runBtn.clicked.connect(self.start_flask_app)
@@ -76,6 +77,7 @@ class MainWindow(QMainWindow):
             self.show_image_from_path()
         except:
             pass
+
 
     def switch_status(self, is_runing):
         self.closeBtn.setVisible(is_runing)
@@ -131,36 +133,38 @@ class MainWindow(QMainWindow):
 
     def show_image_from_path(self, 
                              image_path=parameters['image']['after']):
-        self.scene.clear()
-        image_pil = Image.open(image_path)
-        w, h = image_pil.size
-        
-        # 计算宽高比
-        aspect_ratio = w / h
-        
-        # 根据宽高比确定缩放后的图片尺寸
-        if IMG_WIDTH / IMG_HEIGHT > aspect_ratio:
-            # 以高度为准
-            scaled_width = int(IMG_HEIGHT * aspect_ratio)
-            scaled_height = IMG_HEIGHT
-        else:
-            # 以宽度为准
-            scaled_width = IMG_WIDTH
-            scaled_height = int(IMG_WIDTH / aspect_ratio)
-        # 缩放图片
-        image_pil = image_pil.resize((scaled_width, scaled_height), Image.Resampling.LANCZOS)
-        
         # 创建白色背景 QPixmap
         scaled_ratio = 0.9
         background_pixmap = QPixmap(QSize(int(IMG_WIDTH * scaled_ratio), int(IMG_HEIGHT * scaled_ratio)))
         background_pixmap.fill(Qt.white)  # 用白色填充
-        # 将缩放后的图片绘制到背景 QPixmap 上
-        painter = QPainter(background_pixmap)
-        painter.drawPixmap((IMG_WIDTH - scaled_width) // 2, (IMG_HEIGHT - scaled_height) // 2, scaled_width, scaled_height, QPixmap.fromImage(image_pil.toqimage()))
-        painter.end()
-        
+
+        if not os.path.exists(image_path):
+            image_pil = None
+        else:
+            image_pil = Image.open(image_path)
+            w, h = image_pil.size
+            # 计算宽高比
+            aspect_ratio = w / h
+            # 根据宽高比确定缩放后的图片尺寸
+            if IMG_WIDTH / IMG_HEIGHT > aspect_ratio:
+                # 以高度为准
+                scaled_width = int(IMG_HEIGHT * aspect_ratio)
+                scaled_height = IMG_HEIGHT
+            else:
+                # 以宽度为准
+                scaled_width = IMG_WIDTH
+                scaled_height = int(IMG_WIDTH / aspect_ratio)
+            # 缩放图片
+            image_pil = image_pil.resize((scaled_width, scaled_height), Image.Resampling.LANCZOS)
+            
+            # 将缩放后的图片绘制到背景 QPixmap 上
+            painter = QPainter(background_pixmap)
+            painter.drawPixmap((IMG_WIDTH - scaled_width) // 2, (IMG_HEIGHT - scaled_height) // 2, scaled_width, scaled_height, QPixmap.fromImage(image_pil.toqimage()))
+            painter.end()
         # 创建 QGraphicsPixmapItem 并添加到场景中
         pixmap_item = QGraphicsPixmapItem(background_pixmap)
+        for item in self.scene.items():
+            self.scene.removeItem(item)
         self.scene.addItem(pixmap_item)
 
     def closeEvent(self, event):

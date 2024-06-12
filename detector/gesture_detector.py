@@ -25,7 +25,7 @@ class GestureDetector:
         image_gray = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2GRAY)
         face_res = ocr_res = None
         face_res = self.emotion_recognizer.recognize_emotion_from_image(image_gray)
-        # print(f'face: {face_res}')
+        print(f'face: {face_res}')
         # 人脸的优先级高于手势
         if face_res is None:  # 当不存在人脸时，进行手部关键点检测
             pos = self.hand_detector.detect_thumb_tips(image_bgr)
@@ -34,6 +34,8 @@ class GestureDetector:
                 self.shift_x = pos[0][0]
                 cropped_image = self.hand_detector.crop_image_from_tips_pos(image_bgr, pos)
                 ocr_res = self.ocr_handle.text_predict_from_image(cropped_image, 640)
+                print(f'ocr: {ocr_res}')
+
         return [face_res, ocr_res]
 
     def draw_on_image(self, image_pil, face_res, ocr_res):
